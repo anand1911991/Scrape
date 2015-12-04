@@ -1,0 +1,53 @@
+(function(console){
+console.save = function(data, filename){
+
+    if(!data) {
+        console.error('Console.save: No data')
+        return;
+    }
+
+    if(!filename) filename = 'console.json'
+
+    if(typeof data === "object"){
+        data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], {type: 'text/json'}),
+        e    = document.createEvent('MouseEvents'),
+        a    = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+ }
+})(console)
+
+var dump = "";
+list = document.querySelectorAll("#content div #hotelsListing div div.listing_top")
+
+for(var i=0;i<list.length;i++){
+    console.log(list[i]);
+    try {
+        dump += list[i].querySelector("#content #hotelsListing div div.hotel_details p.clearfix.hote_nameinfo a.pull-left.hotel_name.ng-binding").innerText;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        dump += list[i].querySelector("#content #hotelsListing div p.clearfix.city_info span.hotel_location.pull-left span.hidden-xs.hidden-sm.hidden-stb.ng-binding").innerText;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        text = list[i].querySelector("#content #hotelsListing div div div span span.make_block.grey_scale img.img-responsive").src;
+	text = text.split('/')[6];
+	text= text.split('-')[0];
+	dump += text;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        dump += list[i].querySelector("#content #hotelsListing div div.ng-scope span.ng-scope div p.actual_price.text-right.ng-binding").innerText;
+    } catch(e) {}
+    dump += '\n'
+}
+
+console.save(dump, "name.txt");

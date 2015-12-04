@@ -1,0 +1,62 @@
+(function(console){
+console.save = function(data, filename){
+
+    if(!data) {
+        console.error('Console.save: No data')
+        return;
+    }
+
+    if(!filename) filename = 'console.json'
+
+    if(typeof data === "object"){
+        data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], {type: 'text/json'}),
+        e    = document.createEvent('MouseEvents'),
+        a    = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+ }
+})(console)
+
+firstMore = document.querySelector('p.partial_entry span.taLnk')
+firstMore && firstMore.click()
+
+setTimeout(function() {
+var dump = "";
+var rev = "";
+list = document.querySelectorAll('#MAIN #BODYCON #HDPR_V1 #REVIEWS .reviewSelector')
+
+
+for(var i=0;i<list.length;i++){
+try {
+    var text = "";
+    text = list[i].querySelector('#MAIN #BODYCON #HDPR_V1 #REVIEWS div span.rate.sprite-rating_s.rating_s img.sprite-rating_s_fill').alt;
+    dump = parseInt(text.split(' of ')[0]);
+    if (dump >= 4){
+try {    
+    rev = list[i].querySelector('#MAIN #BODYCON #HDPR_V1 #REVIEWS div div.wrap div.entry p.partial_entry').innerText;
+    console.save(rev, "pos.txt");
+    } catch(e) {}      
+}
+   else{
+        if (dump <=2){
+try {    
+    rev = list[i].querySelector('#MAIN #BODYCON #HDPR_V1 #REVIEWS div div.wrap div.entry p.partial_entry').innerText;
+    console.save(rev, "neg.txt");
+    } catch(e) {}     
+}}
+} catch(e){}
+}
+},3000)
+
+
+
+
+
+

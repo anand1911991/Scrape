@@ -1,0 +1,62 @@
+(function(console){
+console.save = function(data, filename){
+
+    if(!data) {
+        console.error('Console.save: No data')
+        return;
+    }
+
+    if(!filename) filename = 'console.json'
+
+    if(typeof data === "object"){
+        data = JSON.stringify(data, undefined, 4)
+    }
+
+    var blob = new Blob([data], {type: 'text/json'}),
+        e    = document.createEvent('MouseEvents'),
+        a    = document.createElement('a')
+
+    a.download = filename
+    a.href = window.URL.createObjectURL(blob)
+    a.dataset.downloadurl =  ['text/json', a.download, a.href].join(':')
+    e.initMouseEvent('click', true, false, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null)
+    a.dispatchEvent(e)
+ }
+})(console)
+
+var dump = "";
+list = document.querySelectorAll('#area ul.listView.clearFix li.listItem')
+
+for(var i=0;i<list.length;i++){
+    try {
+        dump += list[i].querySelector('ul li h2 a').innerText;
+    } catch(e) {}
+    dump += '\t'    
+    try {
+        dump += list[i].querySelector('nav ul li.info small').innerText;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        dump += list[i].querySelector('#totPriceDisp strong').innerText;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        var loc = list[i].getAttribute('data-latlng');
+        var lat = loc.split(",")[0];
+        var long = loc.split(",")[1];
+        dump += lat;
+        dump += '\t'
+        dump += long;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        dump += list[i].querySelector('div ul.listView.clearFix li.listItem section div span').innerText;
+    } catch(e) {}
+    dump += '\t'
+    try {
+        dump += list[i].querySelector('li.listItem.listUnit.clearFix section.clearFix ul.inline li.info h2.truncate.span.span24 a.hotelDetails').href;
+    } catch(e) {}
+    dump += '\n'
+}
+
+console.save(dump, "name.txt");
